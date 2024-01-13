@@ -25,16 +25,20 @@ const successAnswerPhrases = [
 //UI links
 const orderNumberField = document.querySelector('#orderNumberField');
 const answerField = document.querySelector('#answerField');
+
 const modalInputValues = $('#modalInputValues');
 const minValueField = document.querySelector('#minValueInput');
 const maxValueField = document.querySelector('#maxValueInput');
+
 const modalStartAlert = $('#modalStartAlert');
 const modalStartAlertText = document.querySelector("#modalStartAlert h5");
 
 //vars
 let minValue, maxValue, answerNumber, orderNumber;
 let gameRun;
+let firstRun = true;
 
+//Старт/рестарт игры
 function Start()
 {
     minValue = parseInt(minValueField.value) || 0;
@@ -57,10 +61,15 @@ function Start()
     orderNumberField.innerText = orderNumber++;
     answerField.innerText = `${nextAnswerPhrases[0]} ${IntToText(answerNumber)}?`;
 
-    modalStartAlertText.innerText = `Загадайте любое целое число от ${minValue} до ${maxValue}, а я его угадаю`;
-    modalStartAlert.modal("show");    
+    if (firstRun)
+    {
+        modalStartAlertText.innerText = `Загадайте любое целое число от ${minValue} до ${maxValue}, а я его угадаю`;
+        modalStartAlert.modal("show");
+        firstRun = false;
+    }
 }
 
+// Перевод числовой записи в пропись
 function IntToText(n)
 {
     const maxLength = 20;
@@ -72,21 +81,6 @@ function IntToText(n)
     {
         result = 'ноль';
     }
-    else if ((workNuber > 10) && (workNuber < 20))
-    {
-        switch (workNuber)
-        {
-            case 11: result = `${sign}одинадцать`; break;
-            case 12: result = `${sign}двенадцать`; break;
-            case 13: result = `${sign}тринадцать`; break;
-            case 14: result = `${sign}четырнадцать`; break;
-            case 15: result = `${sign}пятнадцать`; break;
-            case 16: result = `${sign}шестнадцать`; break;
-            case 17: result = `${sign}семнадцать`; break;
-            case 18: result = `${sign}восемнадцать`; break;
-            case 19: result = `${sign}девятнадцать`; break;
-        }
-    }
     else
     {
         const textValues = 
@@ -97,10 +91,31 @@ function IntToText(n)
         ];
 
         let i = 0;
+
+        if ((workNuber % 100 > 10) && (workNuber % 100 < 20))
+        {
+            switch (workNuber % 100)
+            {
+                case 11: result = "одинадцать"; break;
+                case 12: result = "двенадцать"; break;
+                case 13: result = "тринадцать"; break;
+                case 14: result = "четырнадцать"; break;
+                case 15: result = "пятнадцать"; break;
+                case 16: result = "шестнадцать"; break;
+                case 17: result = "семнадцать"; break;
+                case 18: result = "восемнадцать"; break;
+                case 19: result = "девятнадцать"; break;
+            }
+            workNuber = Math.floor(workNuber / 100);
+            i = 2;
+        }
+
         while (workNuber != 0)
         {
             let curDigit = workNuber % 10;
-            result = textValues[i][curDigit] + (result.length > 0 ? " ": "") + result;
+            
+            if (curDigit != 0)
+                result = textValues[i][curDigit] + (result.length > 0 ? " " : "") + result;
             
             workNuber = Math.floor(workNuber / 10);
             i++;
@@ -112,6 +127,7 @@ function IntToText(n)
     return (result.length < maxLength) ? result : n;
 }
 
+// Стартовая форма закрыта
 modalInputValues.on('hidden.bs.modal', Start);
 
 // Рестарт программы
@@ -140,8 +156,6 @@ document.querySelector('#btnOver').addEventListener('click', function () {
             answerNumber = Math.floor((minValue + maxValue) / 2);
             orderNumberField.innerText = orderNumber++;            
 
-            //Вывод числа в прописью, если строка получается менее 20 символов (15 баллов)
-            
             const phraseRandom = Math.round( Math.random() * (nextAnswerPhrases.length - 1));
             answerField.innerText = `${nextAnswerPhrases[phraseRandom]} ${IntToText(answerNumber)}?`;
         }
@@ -161,8 +175,6 @@ document.querySelector('#btnLess').addEventListener('click', function () {
             answerNumber = Math.floor((minValue + maxValue) / 2);
             orderNumberField.innerText = orderNumber++;            
 
-            //Вывод числа в прописью, если строка получается менее 20 символов (15 баллов)
-            
             const phraseRandom = Math.round( Math.random() * (nextAnswerPhrases.length - 1));
             answerField.innerText = `${nextAnswerPhrases[phraseRandom]} ${IntToText(answerNumber)}?`;
         }
@@ -179,4 +191,5 @@ document.querySelector('#btnEqual').addEventListener('click', function () {
     }
 });
 
+// Открыть стартовую форму
 modalInputValues.modal("show");
