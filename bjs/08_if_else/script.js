@@ -33,21 +33,79 @@ let gameRun;
 function Start()
 {
     //Заменить методы window на что-нибудь из bootstrap (20 баллов)
-    minValue = parseInt(prompt('Минимальное знание числа для игры','0'));
-    maxValue = parseInt(prompt('Максимальное знание числа для игры','100'));
-    alert(`Загадайте любое целое число от ${minValue} до ${maxValue}, а я его угадаю`);
+    minValue = parseInt(prompt('Минимальное знание числа для игры','0')) || 0;
+    maxValue = parseInt(prompt('Максимальное знание числа для игры','100')) || 100;
 
-    //Валидация введенных значений (через дизъюнкции) (10 баллов)
+    if (minValue > maxValue)
+    {
+        let b = minValue;
+        minValue = maxValue;
+        maxValue = b;
+    }
+
+    minValue = minValue < -999 ? -999 : minValue;
+    maxValue = maxValue > 999 ? 999 : maxValue;
     
-    //Ограничение по минимому и максимому для введенных значений (через тернарный оператор) (10 баллов)
-    // мин = -999   макс = 999
+
+    alert(`Загадайте любое целое число от ${minValue} до ${maxValue}, а я его угадаю`);
 
     answerNumber  = Math.floor((minValue + maxValue) / 2);
     orderNumber = 1;
     gameRun = true;
 
     orderNumberField.innerText = orderNumber++;
-    answerField.innerText = `${nextAnswerPhrases[0]} ${answerNumber }?`;
+    answerField.innerText = `${nextAnswerPhrases[0]} ${IntToText(answerNumber)}?`;
+}
+
+function IntToText(n)
+{
+    const maxLength = 20;
+    let result = "";
+    let sign = (Math.abs(n) != n) ? "минус " : "";
+    let workNuber = Math.abs(n);
+
+    if (n == 0)
+    {
+        result = 'ноль';
+    }
+    else if ((workNuber > 10) && (workNuber < 20))
+    {
+        switch (workNuber)
+        {
+            case 11: result = `${sign}одинадцать`; break;
+            case 12: result = `${sign}двенадцать`; break;
+            case 13: result = `${sign}тринадцать`; break;
+            case 14: result = `${sign}четырнадцать`; break;
+            case 15: result = `${sign}пятнадцать`; break;
+            case 16: result = `${sign}шестнадцать`; break;
+            case 17: result = `${sign}семнадцать`; break;
+            case 18: result = `${sign}восемнадцать`; break;
+            case 19: result = `${sign}девятнадцать`; break;
+        }
+    }
+    else
+    {
+        const textValues = 
+        [
+            ["", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"],
+            ["", "десять", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"],
+            ["", "сто", "двести", "тристо", "четыресто", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот"],
+        ];
+
+        let i = 0;
+        while (workNuber != 0)
+        {
+            let curDigit = workNuber % 10;
+            result = textValues[i][curDigit] + (result.length > 0 ? " ": "") + result;
+            
+            workNuber = Math.floor(workNuber / 10);
+            i++;
+        }
+
+        result = sign + result;
+    }
+
+    return (result.length < maxLength) ? result : n;
 }
 
 Start();
@@ -81,7 +139,7 @@ document.querySelector('#btnOver').addEventListener('click', function () {
             //Вывод числа в прописью, если строка получается менее 20 символов (15 баллов)
             
             const phraseRandom = Math.round( Math.random() * (nextAnswerPhrases.length - 1));
-            answerField.innerText = `${nextAnswerPhrases[phraseRandom]} ${answerNumber }?`;
+            answerField.innerText = `${nextAnswerPhrases[phraseRandom]} ${IntToText(answerNumber)}?`;
         }
     }
 })
@@ -102,7 +160,7 @@ document.querySelector('#btnLess').addEventListener('click', function () {
             //Вывод числа в прописью, если строка получается менее 20 символов (15 баллов)
             
             const phraseRandom = Math.round( Math.random() * (nextAnswerPhrases.length - 1));
-            answerField.innerText = `${nextAnswerPhrases[phraseRandom]} ${answerNumber }?`;
+            answerField.innerText = `${nextAnswerPhrases[phraseRandom]} ${IntToText(answerNumber)}?`;
         }
     }
 })
