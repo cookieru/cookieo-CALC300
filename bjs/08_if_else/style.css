@@ -1,4 +1,14 @@
 .game-card {
     height: 100vh;
-    font-family: 'Open Sans', monospace;
+}
+
+body
+{
+    background: center no-repeat url("gray-oil-paint-textured-background.jpg");
+    background-size: cover;
+}
+
+footer
+{
+    margin: 8px;
 }
