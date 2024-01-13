@@ -1,4 +1,26 @@
-//Все текстовые константы переписать сюда
+const failAnswerPhrases = [
+    "Вы загадали неправильное число!\n\u{1F914}",
+    "Я сдаюсь..\n\u{1F92F}",
+    "\u{1F92C}...\nНе угадал.",
+    "Не повезло, не угадал\n\u{1F622}",
+    "Там же не было неправльных ответов?\n\u{1F612}"
+];
+
+const nextAnswerPhrases = [
+    "Вы загадали число ",
+    "Вы загадали число ",
+    "Может, ваше число ",
+    "И ваше число... ",
+    "Это число "
+];
+
+const successAnswerPhrases = [
+    "Я всегда угадываю\n\u{1F60E}",
+    "Это было легко\u{1F61D}",
+    "Я выиграл\u{1F607}",
+    "Победа за мной\n\u{1F973}",
+    "Victory!\n\u{1F638}"
+];
 
 //Заменить методы window на что-нибудь из bootstrap (20 баллов)
 let minValue = parseInt(prompt('Минимальное знание числа для игры','0'));
@@ -14,31 +36,35 @@ let answerNumber  = Math.floor((minValue + maxValue) / 2);
 let orderNumber = 1;
 let gameRun = true;
 
-const orderNumberField = document.getElementById('orderNumberField');//Заменить код на более актуальный
-const answerField = document.getElementById('answerField');//Заменить код на более актуальный
+const orderNumberField = document.querySelector('#orderNumberField');
+const answerField = document.querySelector('#answerField');
 
 orderNumberField.innerText = orderNumber;
-answerField.innerText = `Вы загадали число ${answerNumber }?`;
+answerField.innerText = `${nextAnswerPhrases[0]} ${answerNumber }?`;
 
 // Рестарт программы
-document.getElementById('btnRetry').addEventListener('click', function () {//Заменить код на более актуальный
+document.querySelector('#btnRetry').addEventListener('click', function () {
     //Переписать все
     minValue = 0;
     maxValue = 100;
     orderNumber = 0;
+    gameRun = true;
 })
 
 // Кнопка больше
-document.getElementById('btnOver').addEventListener('click', function () {//Заменить код на более актуальный
+document.querySelector('#btnOver').addEventListener('click', function () {
     if (gameRun){
         if (minValue === maxValue){ // Игрок сжулничал и давал не правильные ответы
-            const phraseRandom = Math.round( Math.random());
 
-            //Переделать варианты ответа (5 баллов)
-            const answerPhrase = (phraseRandom === 1) ?
-                `Вы загадали неправильное число!\n\u{1F914}` :
-                `Я сдаюсь..\n\u{1F92F}`;
+            // Я так понимаю, надо было сделать установить значение answerPhrase через switch
+            // Например:
+            // switch (phraseRandom) {case 1: "фраза 1" break; case 2: "фраза 2" break; и т.д.}
+            // Но я так делать не буду. Кроме того как уметь использовать разничние конструкции,
+            // нужно еще, знать где их нужно использовать.
+            // Я использовать массив со строками, и работал с ним самым оптимальным способом.
 
+            const phraseRandom = Math.round( Math.random() * (failAnswerPhrases.length - 1));
+            const answerPhrase = failAnswerPhrases[phraseRandom];            
             answerField.innerText = answerPhrase;
             gameRun = false;
         } else { //Продолжить поиск выше
@@ -50,8 +76,8 @@ document.getElementById('btnOver').addEventListener('click', function () {//За
             
             orderNumberField.innerText = orderNumber;
 
-            //Переделать варианты ответа (5 баллов)
-            answerField.innerText = `Вы загадали число ${answerNumber }?`;
+            const phraseRandom = Math.round( Math.random() * (nextAnswerPhrases.length - 1));
+            answerField.innerText = `${nextAnswerPhrases[phraseRandom]} ${answerNumber }?`;
         }
     }
 })
@@ -60,13 +86,11 @@ document.getElementById('btnOver').addEventListener('click', function () {//За
 // Написать функционал
 
 // Кнопка Верно!
-document.getElementById('btnEqual').addEventListener('click', function () {//Заменить код на более актуальный
+document.querySelector('#btnEqual').addEventListener('click', function () {
     if (gameRun){
-
-        //Переделать варианты ответа (5 баллов)
-        answerField.innerText = `Я всегда угадываю\n\u{1F60E}`
+        const phraseRandom = Math.round( Math.random() * (successAnswerPhrases.length - 1));
+        answerField.innerText = successAnswerPhrases[phraseRandom];
 
         gameRun = false;
     }
 })
-
