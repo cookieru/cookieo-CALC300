@@ -25,6 +25,11 @@ const successAnswerPhrases = [
 //UI links
 const orderNumberField = document.querySelector('#orderNumberField');
 const answerField = document.querySelector('#answerField');
+const modalInputValues = $('#modalInputValues');
+const minValueField = document.querySelector('#minValueInput');
+const maxValueField = document.querySelector('#maxValueInput');
+const modalStartAlert = $('#modalStartAlert');
+const modalStartAlertText = document.querySelector("#modalStartAlert h5");
 
 //vars
 let minValue, maxValue, answerNumber, orderNumber;
@@ -32,9 +37,8 @@ let gameRun;
 
 function Start()
 {
-    //Заменить методы window на что-нибудь из bootstrap (20 баллов)
-    minValue = parseInt(prompt('Минимальное знание числа для игры','0')) || 0;
-    maxValue = parseInt(prompt('Максимальное знание числа для игры','100')) || 100;
+    minValue = parseInt(minValueField.value) || 0;
+    maxValue = parseInt(maxValueField.value) || 100;
 
     if (minValue > maxValue)
     {
@@ -44,10 +48,7 @@ function Start()
     }
 
     minValue = minValue < -999 ? -999 : minValue;
-    maxValue = maxValue > 999 ? 999 : maxValue;
-    
-
-    alert(`Загадайте любое целое число от ${minValue} до ${maxValue}, а я его угадаю`);
+    maxValue = maxValue > 999 ? 999 : maxValue;    
 
     answerNumber  = Math.floor((minValue + maxValue) / 2);
     orderNumber = 1;
@@ -55,6 +56,9 @@ function Start()
 
     orderNumberField.innerText = orderNumber++;
     answerField.innerText = `${nextAnswerPhrases[0]} ${IntToText(answerNumber)}?`;
+
+    modalStartAlertText.innerText = `Загадайте любое целое число от ${minValue} до ${maxValue}, а я его угадаю`;
+    modalStartAlert.modal("show");    
 }
 
 function IntToText(n)
@@ -108,12 +112,12 @@ function IntToText(n)
     return (result.length < maxLength) ? result : n;
 }
 
-Start();
+modalInputValues.on('hidden.bs.modal', Start);
 
 // Рестарт программы
 document.querySelector('#btnRetry').addEventListener('click', function () {
-    Start();
-})
+    modalInputValues.modal("show");
+});
 
 // Кнопка больше
 document.querySelector('#btnOver').addEventListener('click', function () {
@@ -142,7 +146,7 @@ document.querySelector('#btnOver').addEventListener('click', function () {
             answerField.innerText = `${nextAnswerPhrases[phraseRandom]} ${IntToText(answerNumber)}?`;
         }
     }
-})
+});
 
 // Кнопка меньше
 document.querySelector('#btnLess').addEventListener('click', function () {
@@ -163,7 +167,7 @@ document.querySelector('#btnLess').addEventListener('click', function () {
             answerField.innerText = `${nextAnswerPhrases[phraseRandom]} ${IntToText(answerNumber)}?`;
         }
     }
-})
+});
 
 // Кнопка Верно!
 document.querySelector('#btnEqual').addEventListener('click', function () {
@@ -173,4 +177,6 @@ document.querySelector('#btnEqual').addEventListener('click', function () {
 
         gameRun = false;
     }
-})
+});
+
+modalInputValues.modal("show");
