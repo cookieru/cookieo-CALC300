@@ -42,7 +42,7 @@ let firstRun = true;
 function Start()
 {
     minValue = parseInt(minValueField.value) || 0;
-    maxValue = parseInt(maxValueField.value) || 100;
+    maxValue = parseInt(maxValueField.value) === 0 ? 0 : parseInt(maxValueField.value) || 100;
 
     if (minValue > maxValue)
     {
@@ -60,13 +60,10 @@ function Start()
 
     orderNumberField.innerText = orderNumber++;
     answerField.innerText = `${nextAnswerPhrases[0]} ${IntToText(answerNumber)}?`;
-
-    if (firstRun)
-    {
-        modalStartAlertText.innerText = `Загадайте любое целое число от ${minValue} до ${maxValue}, а я его угадаю`;
-        modalStartAlert.modal("show");
-        firstRun = false;
-    }
+    
+    modalStartAlertText.innerText = `Загадайте любое целое число от ${minValue} до ${maxValue}, а я его угадаю`;
+    modalStartAlert.modal("show");
+    firstRun = false;
 }
 
 // Перевод числовой записи в пропись
@@ -165,19 +162,24 @@ document.querySelector('#btnOver').addEventListener('click', function () {
 // Кнопка меньше
 document.querySelector('#btnLess').addEventListener('click', function () {
     if (gameRun){
-        if (minValue === maxValue){ // Игрок сжулничал и давал не правильные ответы
-            const phraseRandom = Math.round( Math.random() * (failAnswerPhrases.length - 1));
-            const answerPhrase = failAnswerPhrases[phraseRandom];            
-            answerField.innerText = answerPhrase;
-            gameRun = false;
-        } else { //Продолжить поиск ниже
+        if (minValue !== maxValue){ //Продолжить поиск ниже
             maxValue = answerNumber - 1;
-            answerNumber = Math.floor((minValue + maxValue) / 2);
-            orderNumberField.innerText = orderNumber++;            
+            if (maxValue >= minValue)
+            {
+                answerNumber = Math.ceil((minValue + maxValue) / 2);
+                orderNumberField.innerText = orderNumber++;            
 
-            const phraseRandom = Math.round( Math.random() * (nextAnswerPhrases.length - 1));
-            answerField.innerText = `${nextAnswerPhrases[phraseRandom]} ${IntToText(answerNumber)}?`;
-        }
+                const phraseRandom = Math.round( Math.random() * (nextAnswerPhrases.length - 1));
+                answerField.innerText = `${nextAnswerPhrases[phraseRandom]} ${IntToText(answerNumber)}?`;
+                return;
+            }
+        } 
+        // Игрок сжулничал и давал не правильные ответы
+        const phraseRandom = Math.round( Math.random() * (failAnswerPhrases.length - 1));
+        const answerPhrase = failAnswerPhrases[phraseRandom];            
+        answerField.innerText = answerPhrase;
+        gameRun = false;
+        
     }
 });
 
