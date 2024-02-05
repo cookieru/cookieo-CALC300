@@ -50,6 +50,32 @@ const personGenerator = {
             "id_10": "Екатерина"
         }
     }`,
+    
+    jobListJson: `{
+        "count": 20,
+        "list": {     
+            "id_1": "Повар",
+            "id_2": "[Ж]Кондитер",
+            "id_3": "[М]Моряк",
+            "id_4": "[Ж]Певица",
+            "id_5": "Штукатур-маляр",
+            "id_6": "Искусствовед",
+            "id_7": "Программист",
+            "id_8": "Переводчик",
+            "id_9": "[М]Водитель",
+            "id_10": "[М]Спортивный тренер",
+            "id_11": "Психолог",
+            "id_12": "Адвокат",
+            "id_13": "[М]Сварщик",
+            "id_14": "Маркетолог",
+            "id_15": "Врач",
+            "id_16": "Бухгалтер",
+            "id_17": "[М]Шахтер",
+            "id_18": "[Ж]Актриса",
+            "id_19": "[М]Электрик",
+            "id_20": "[М]Военнослужащий"
+        }
+    }`,
 
     GENDER_MALE: 'Мужчина',
     GENDER_FEMALE: 'Женщина',
@@ -62,9 +88,39 @@ const personGenerator = {
         return obj.list[prop];
     },
 
+    randomValueJob: function () {
+        //Список берется напрямую из объекта, а не через параметр функции
+        const obj = JSON.parse(this.jobListJson);
+
+        // В названии профессий может быть марка гендерной привязанности
+        // Нам нужно определить, сколько профессий в списке можно причислить к текущему полу
+        let genderMark = this.person.gender === this.GENDER_MALE? "[Ж]" : "[М]";
+
+        let newCount = obj.count;
+        for (let j = 1; j <= obj.count; j++) 
+            if ( String(obj.list[`id_${j}`]).includes(genderMark)) newCount--;
+       
+        // Потом по полученному количеству генерируем случайное число
+        // и сразу в цикле for определяем, можем ли мы привязать случайно выбранную профессию
+        // Если нет, то переходим к следущему варианту в списке.
+        // ========================================================
+        // Цикл for позволяет сразу установить значение счетчику, проверить значение по счетчику и изменить счетчик
+        // три зайца одним выстрелом (в одну строку), хоть и можно считать ниндзя-кодом
+        // Такая конструкция нам позволяет из одного списка профессий выбрать только необходимые, если критерий содержится в значении
+        let i;
+        for (i = this.randomIntNumber(newCount, 1); String(obj.list[`id_${i}`]).includes(genderMark) ; i++) ;
+        
+        // Удаляем марку из названия
+        genderMark = this.person.gender === this.GENDER_MALE? "[М]" : "[Ж]";
+
+        // И выводим.
+        return String(obj.list[`id_${i}`]).replace(genderMark, "");
+    },
+
     randomFirstName: function() {
 
         if (this.person.gender === this.GENDER_MALE)
+        
         {
             return this.randomValue(this.firstNameMaleJson);
         }
@@ -75,7 +131,6 @@ const personGenerator = {
 
     },
 
-
     randomSurname: function() {
 
         let result = this.randomValue(this.surnameJson);
@@ -83,6 +138,36 @@ const personGenerator = {
         if (this.person.gender === this.GENDER_FEMALE)
         {
             result = result + "а";
+        }
+
+        return result;
+
+    },
+
+    randomFathername: function() {
+
+        let result = String(this.randomValue(this.firstNameMaleJson));
+
+        switch (result[result.length - 1]) {
+            case "й":
+                result = result.substring(0, result.length - 1) + "ев"
+                break;
+
+            case "а":
+                result = result.substring(0, result.length - 1);
+        
+            default:
+                result = result + "ов";
+                break;
+        }
+
+        if (this.person.gender === this.GENDER_MALE)
+        {
+            result = result + "ич";
+        }
+        else
+        {
+            result = result + "на";
         }
 
         return result;
@@ -129,7 +214,9 @@ const personGenerator = {
         this.person.gender = this.randomGender();
         this.person.firstName = this.randomFirstName();
         this.person.surName = this.randomSurname();
+        this.person.fathername = this.randomFathername()
         this.person.birthday = this.randomDate();
+        this.person.job = this.randomValueJob();
         return this.person;
     }
 };
