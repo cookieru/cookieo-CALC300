@@ -77,6 +77,22 @@ const personGenerator = {
         }
     }`,
 
+    months:
+    {
+        1: "января",
+        2: "февраля",
+        3: "марта",
+        4: "апреля",
+        5: "мая",
+        6: "июня",
+        7: "июля",
+        8: "августа",
+        9: "сентября",
+        10: "октября",
+        11: "ноября",
+        12: "декабря"
+    },
+
     GENDER_MALE: 'Мужчина',
     GENDER_FEMALE: 'Женщина',
 
@@ -176,13 +192,13 @@ const personGenerator = {
 
     randomGender: function() {
 
-        return this.randomIntNumber() === 1 ? this.GENDER_MALE : this.GENDER_FEMALE;
+        return this.randomIntNumber() ? this.GENDER_MALE : this.GENDER_FEMALE;
 
     },
 
     randomDate: function() {
 
-        const year = this.randomIntNumber(110, 70) + 1900;
+        const year = this.randomIntNumber(104, 70) + 1900;
         const month = this.randomIntNumber(12, 1);
 
         const isEven = month % 2 === 0;
@@ -205,7 +221,11 @@ const personGenerator = {
 
         const day = this.randomIntNumber(maxDay, 1);
 
-        return `${day}.${month}.${year}`;
+        
+
+        let textMonth = this.months[month]
+
+        return `${day} ${textMonth} ${year} г.`;
     },
 
 
