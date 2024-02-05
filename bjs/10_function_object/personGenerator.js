@@ -135,8 +135,7 @@ const personGenerator = {
 
     randomFirstName: function() {
 
-        if (this.person.gender === this.GENDER_MALE)
-        
+        if (this.person.gender === this.GENDER_MALE)        
         {
             return this.randomValue(this.firstNameMaleJson);
         }
@@ -163,6 +162,18 @@ const personGenerator = {
     randomFathername: function() {
 
         let result = String(this.randomValue(this.firstNameMaleJson));
+
+        if (result == "Никита")
+        {
+            result = "Никитич";            
+
+            if (this.person.gender === this.GENDER_FEMALE)
+            {
+                result = result + "на";
+            }
+
+            return result;
+        }
 
         switch (result[result.length - 1]) {
             case "й":
